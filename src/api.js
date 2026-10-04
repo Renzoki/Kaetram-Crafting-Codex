@@ -1,4 +1,4 @@
-const API = '/api/v1'
+const API = import.meta.env.VITE_API_BASE || '/api/v1'
 
 export const iconUrl = (key) => `${API}/items/${encodeURIComponent(key)}/icon`
 
@@ -12,10 +12,10 @@ export const groupLabel = (key) => {
 function expandGroup(key, keyToName) {
   if (GROUP_OVERRIDES[key]) return GROUP_OVERRIDES[key]
   const guesses = key
-    .slice(1)
-    .split('_or_')
-    .flatMap((p) => [p, p.replace(/_/g, '')])
-    .filter((k) => keyToName[k])
+      .slice(1)
+      .split('_or_')
+      .flatMap((p) => [p, p.replace(/_/g, '')])
+      .filter((k) => keyToName[k])
   return [...new Set(guesses)]
 }
 
@@ -30,19 +30,19 @@ const toRef = (i) => ({ key: i.key.toLowerCase(), qty: i.count ?? 1 })
 
 function normalizeRecipes(skill, data) {
   return entriesOf(data, 'recipes')
-    .filter(([, r]) => r && typeof r === 'object')
-    .map(([key, r]) => ({
-      id: `${skill}:${key}`,
-      skill,
-      category: r.category,
-      level: r.level,
-      xp: r.experience,
-      inputs: (r.requirements ?? []).map(toRef),
-      outputs: [
-        { key: key.toLowerCase(), qty: r.result?.count ?? 1 },
-        ...(r.result?.items ?? []).map(toRef)
-      ]
-    }))
+      .filter(([, r]) => r && typeof r === 'object')
+      .map(([key, r]) => ({
+        id: `${skill}:${key}`,
+        skill,
+        category: r.category,
+        level: r.level,
+        xp: r.experience,
+        inputs: (r.requirements ?? []).map(toRef),
+        outputs: [
+          { key: key.toLowerCase(), qty: r.result?.count ?? 1 },
+          ...(r.result?.items ?? []).map(toRef)
+        ]
+      }))
 }
 
 const FALLBACK_SKILLS = [
@@ -69,7 +69,7 @@ function buildDropIndex(data) {
     if (!m || typeof m !== 'object') continue
     for (const d of m.drops ?? []) {
       if (!d || typeof d.key !== 'string') continue
-      ;(dropIndex[d.key.toLowerCase()] ??= []).push({
+          ;(dropIndex[d.key.toLowerCase()] ??= []).push({
         mobKey,
         name: m.name ?? mobKey,
         chance: d.chance
@@ -99,7 +99,7 @@ export async function loadCodex() {
 
   const [skillResults, mobResult, itemResult] = await Promise.all([
     Promise.allSettled(
-      skillList.map(async (s) => ({ skill: s, recipes: normalizeRecipes(s, await getJSON(`/crafting/${s}`)) }))
+        skillList.map(async (s) => ({ skill: s, recipes: normalizeRecipes(s, await getJSON(`/crafting/${s}`)) }))
     ),
     Promise.allSettled([getJSON('/mobs')]).then((r) => r[0]),
     Promise.allSettled([getJSON('/items')]).then((r) => r[0])
