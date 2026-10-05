@@ -21,9 +21,9 @@ body {
   font: 18px/1.5 'Alegreya Sans', system-ui, sans-serif;
   min-height: 100vh;
   background:
-    radial-gradient(ellipse 90% 45% at 50% 108%, rgba(214, 84, 24, 0.5) 0%, transparent 70%),
-    radial-gradient(ellipse at 50% -20%, #2a1a14 0%, transparent 60%),
-    linear-gradient(#171010, #0e0908);
+          radial-gradient(ellipse 90% 45% at 50% 108%, rgba(214, 84, 24, 0.5) 0%, transparent 70%),
+          radial-gradient(ellipse at 50% -20%, #2a1a14 0%, transparent 60%),
+          linear-gradient(#171010, #0e0908);
   background-attachment: fixed;
 }
 
@@ -90,7 +90,7 @@ code { background: var(--stone-2); padding: 1px 6px; color: var(--gold); }
 
 .qty-box .stepper input {
   width: 76px; padding: 12px 4px; border: 0; box-shadow: none; background: transparent;
-  font: 700 1.25rem 'Pixelify Sans', ui-monospace, monospace; color: var(--parch); text-align: center;
+  font: 700 1.25rem 'Cinzel', Georgia, serif; color: var(--parch); text-align: center;
   appearance: textfield; -moz-appearance: textfield;
 }
 .qty-box .stepper input:focus-visible { outline: none; }
@@ -134,7 +134,7 @@ code { background: var(--stone-2); padding: 1px 6px; color: var(--gold); }
 .slot.small { width: 52px; height: 52px; box-shadow: inset 0 0 0 2px #0b0705, inset 0 -4px 0 rgba(0, 0, 0, 0.35); }
 .slot-qty {
   position: absolute; right: 4px; bottom: 1px;
-  font: 700 0.9rem 'Pixelify Sans', ui-monospace, monospace; color: #fff;
+  font: 700 0.85rem 'Cinzel', Georgia, serif; color: #fff;
   text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
 }
 
@@ -173,7 +173,7 @@ code { background: var(--stone-2); padding: 1px 6px; color: var(--gold); }
 
 .steps { margin: 0; padding-left: 28px; }
 .steps li { padding: 6px 0 6px 6px; }
-.steps li::marker { color: var(--gold); font-family: 'Pixelify Sans', ui-monospace, monospace; }
+.steps li::marker { color: var(--gold); font-family: 'Cinzel', Georgia, serif; font-weight: 700; }
 .steps li > span:not(.sub) { display: inline-flex; flex-direction: column; vertical-align: middle; }
 .steps img { vertical-align: middle; margin-right: 10px; }
 
