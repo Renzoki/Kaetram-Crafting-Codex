@@ -3,7 +3,7 @@ import { ref, reactive, computed, nextTick } from 'vue'
 import SearchBox from './SearchBox.vue'
 import TreeNode from './TreeNode.vue'
 import { iconUrl } from '../api'
-import { indexByOutput, buildTree, summarize, oddsText, cap } from '../tree'
+import { indexByOutput, buildTree, summarize, oddsText, cap, badge } from '../tree'
 import { categoryOf, sortCategories } from '../categories'
 
 const props = defineProps({
@@ -21,25 +21,25 @@ const activeTab = ref(null)
 const resultsEl = ref(null)
 
 const items = computed(() =>
-  Object.entries(props.codex.nameToKey).map(([lower, key]) => ({
-    name: props.codex.keyToName[key] ?? lower,
-    key
-  }))
+    Object.entries(props.codex.nameToKey).map(([lower, key]) => ({
+      name: props.codex.keyToName[key] ?? lower,
+      key
+    }))
 )
 
 const byOutput = computed(() => indexByOutput(props.codex.recipes))
 
 const craftables = computed(() =>
-  Object.entries(byOutput.value).map(([key, recipes]) => {
-    const first = recipes[0]
-    return {
-      key,
-      name: props.nameOf(key),
-      skill: first.skill,
-      level: Math.min(...recipes.map((r) => r.level ?? 0)),
-      category: categoryOf(props.codex.itemInfo[key], first.skill)
-    }
-  })
+    Object.entries(byOutput.value).map(([key, recipes]) => {
+      const first = recipes[0]
+      return {
+        key,
+        name: props.nameOf(key),
+        skill: first.skill,
+        level: Math.min(...recipes.map((r) => r.level ?? 0)),
+        category: categoryOf(props.codex.itemInfo[key], first.skill)
+      }
+    })
 )
 
 const tabs = computed(() => {
@@ -51,18 +51,18 @@ const tabs = computed(() => {
 const currentTab = computed(() => activeTab.value ?? tabs.value[0]?.label ?? null)
 
 const browseList = computed(() =>
-  craftables.value
-    .filter((c) => c.category === currentTab.value)
-    .sort((a, b) => a.level - b.level || a.name.localeCompare(b.name))
+    craftables.value
+        .filter((c) => c.category === currentTab.value)
+        .sort((a, b) => a.level - b.level || a.name.localeCompare(b.name))
 )
 
-const amount = computed(() => Math.max(1, Math.min(9999, Math.floor(Number(qty.value)) || 1)))
+const amount = computed(() => Math.max(1, Math.min(10000000, Math.floor(Number(qty.value)) || 1)))
 const ctx = computed(() => ({ byOutput: byOutput.value, choices }))
 const tree = computed(() => (target.value ? buildTree(target.value, amount.value, ctx.value) : null))
 const summary = computed(() => (target.value ? summarize(target.value, amount.value, ctx.value) : null))
 
 function bump(delta) {
-  qty.value = Math.max(1, Math.min(9999, amount.value + delta))
+  qty.value = Math.max(1, Math.min(10000000, amount.value + delta))
 }
 
 async function pick(key) {
@@ -73,6 +73,15 @@ async function pick(key) {
   resultsEl.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 
+async function openItem(key, count, recipeId) {
+  qty.value = Math.max(1, Math.min(10000000, Math.floor(Number(count)) || 1))
+  await pick(key)
+  const index = (byOutput.value[key] ?? []).findIndex((r) => r.id === recipeId)
+  if (index > 0) choices[key] = index
+}
+
+defineExpose({ openItem })
+
 function choose({ key, index }) {
   choices[key] = index
 }
@@ -80,9 +89,9 @@ function choose({ key, index }) {
 function sourcesFor(raw) {
   const keys = [raw.key, ...(raw.alts ?? [])]
   return keys
-    .flatMap((k) => props.codex.dropIndex[k] ?? [])
-    .sort((a, b) => (b.chance ?? 0) - (a.chance ?? 0))
-    .slice(0, 3)
+      .flatMap((k) => props.codex.dropIndex[k] ?? [])
+      .sort((a, b) => (b.chance ?? 0) - (a.chance ?? 0))
+      .slice(0, 3)
 }
 
 function hide(e) {
@@ -93,7 +102,7 @@ function hide(e) {
 <template>
   <section class="forge">
     <header class="forge-head">
-      <h1>The Forge</h1>
+      <h1>Recipe Planner</h1>
       <p>Choose an item and how many you want. See every step down to the raw materials.</p>
     </header>
 
@@ -105,27 +114,27 @@ function hide(e) {
         <label for="qty">Quantity</label>
         <div class="stepper">
           <button
-            type="button"
-            aria-label="Decrease quantity"
-            title="Shift-click for 10"
-            :disabled="amount <= 1"
-            @click="bump(-($event.shiftKey ? 10 : 1))"
+              type="button"
+              aria-label="Decrease quantity"
+              title="Shift-click for 10"
+              :disabled="amount <= 1"
+              @click="bump(-($event.shiftKey ? 10 : 1))"
           >−</button>
           <input
-            id="qty"
-            v-model.number="qty"
-            type="number"
-            min="1"
-            max="9999"
-            inputmode="numeric"
-            @blur="qty = amount"
+              id="qty"
+              v-model.number="qty"
+              type="number"
+              min="1"
+              max="10000000"
+              inputmode="numeric"
+              @blur="qty = amount"
           />
           <button
-            type="button"
-            aria-label="Increase quantity"
-            title="Shift-click for 10"
-            :disabled="amount >= 9999"
-            @click="bump($event.shiftKey ? 10 : 1)"
+              type="button"
+              aria-label="Increase quantity"
+              title="Shift-click for 10"
+              :disabled="amount >= 10000000"
+              @click="bump($event.shiftKey ? 10 : 1)"
           >+</button>
         </div>
       </div>
@@ -142,14 +151,14 @@ function hide(e) {
     <div v-if="tabs.length" class="browse">
       <div class="cat-tabs" role="tablist" aria-label="Item types">
         <button
-          v-for="t in tabs"
-          :key="t.label"
-          type="button"
-          role="tab"
-          class="cat"
-          :class="{ on: t.label === currentTab }"
-          :aria-selected="t.label === currentTab"
-          @click="activeTab = t.label"
+            v-for="t in tabs"
+            :key="t.label"
+            type="button"
+            role="tab"
+            class="cat"
+            :class="{ on: t.label === currentTab }"
+            :aria-selected="t.label === currentTab"
+            @click="activeTab = t.label"
         >
           {{ t.label }} <span class="cat-count">{{ t.count }}</span>
         </button>
@@ -157,12 +166,12 @@ function hide(e) {
 
       <div class="browse-grid" role="tabpanel">
         <button
-          v-for="c in browseList"
-          :key="c.key"
-          type="button"
-          class="browse-item"
-          :class="{ on: c.key === target }"
-          @click="pick(c.key)"
+            v-for="c in browseList"
+            :key="c.key"
+            type="button"
+            class="browse-item"
+            :class="{ on: c.key === target }"
+            @click="pick(c.key)"
         >
           <span class="slot small">
             <img :src="iconUrl(c.key)" alt="" width="40" height="40" @error="hide" />
@@ -181,7 +190,7 @@ function hide(e) {
       <div ref="resultsEl" class="target">
         <div class="slot big" :class="{ raw: tree.raw }">
           <img :src="iconUrl(target)" alt="" width="64" height="64" @error="hide" />
-          <span class="slot-qty">{{ amount }}</span>
+          <span class="slot-qty" :title="amount.toLocaleString()">{{ badge(amount) }}</span>
         </div>
         <div class="target-info">
           <h2>{{ nameOf(target) }}</h2>
@@ -203,7 +212,7 @@ function hide(e) {
           <div v-for="m in summary.raw" :key="m.key" class="mat">
             <div class="slot raw">
               <img :src="iconUrl(m.alts?.[0] ?? m.key)" alt="" width="48" height="48" @error="hide" />
-              <span class="slot-qty">{{ m.qty.toLocaleString() }}</span>
+              <span class="slot-qty" :title="m.qty.toLocaleString()">{{ badge(m.qty) }}</span>
             </div>
             <div class="info">
               <span class="name">{{ nameOf(m.key) }}</span>

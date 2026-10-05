@@ -9,6 +9,10 @@
   --parch: #f2e5d2;
   --mute: #ab9a8c;
   --px: 4px;
+  --glow: rgba(255, 138, 61, 0.45);
+  --slot-hi: #3b2b20;
+  --slot-lo: #1a110d;
+  --slot-in: #0b0705;
 }
 
 * { box-sizing: border-box; }
@@ -58,7 +62,7 @@ code { background: var(--stone-2); padding: 1px 6px; color: var(--gold); }
 .forge-head { text-align: center; margin-bottom: 28px; }
 .forge-head h1 {
   margin: 0; font-size: clamp(2rem, 6vw, 3rem); font-weight: 700; color: var(--gold);
-  text-shadow: 0 0 18px rgba(255, 138, 61, 0.45), 3px 3px 0 #000;
+  text-shadow: 0 0 18px var(--glow), 3px 3px 0 #000;
 }
 .forge-head p { margin: 8px 0 0; color: var(--mute); font-style: italic; }
 
@@ -89,7 +93,7 @@ code { background: var(--stone-2); padding: 1px 6px; color: var(--gold); }
 .stepper button:focus-visible { outline: 2px solid var(--gold); outline-offset: -4px; }
 
 .qty-box .stepper input {
-  width: 76px; padding: 12px 4px; border: 0; box-shadow: none; background: transparent;
+  width: 132px; padding: 12px 4px; border: 0; box-shadow: none; background: transparent;
   font: 700 1.25rem 'Cinzel', Georgia, serif; color: var(--parch); text-align: center;
   appearance: textfield; -moz-appearance: textfield;
 }
@@ -125,13 +129,13 @@ code { background: var(--stone-2); padding: 1px 6px; color: var(--gold); }
 
 .slot {
   position: relative; flex: none; width: 64px; height: 64px; display: grid; place-items: center;
-  background: radial-gradient(circle at 50% 35%, #3b2b20 0%, #1a110d 80%);
+  background: radial-gradient(circle at 50% 35%, var(--slot-hi) 0%, var(--slot-lo) 80%);
   border: 2px solid var(--edge);
-  box-shadow: inset 0 0 0 2px #0b0705, inset 0 -6px 0 rgba(0, 0, 0, 0.35), 3px 3px 0 #000;
+  box-shadow: inset 0 0 0 2px var(--slot-in), inset 0 -6px 0 rgba(0, 0, 0, 0.35), 3px 3px 0 #000;
 }
-.slot.raw { border-color: var(--gold-dim); box-shadow: inset 0 0 0 2px #0b0705, inset 0 -6px 0 rgba(0, 0, 0, 0.35), 3px 3px 0 #000, 0 0 12px rgba(255, 138, 61, 0.25); }
+.slot.raw { border-color: var(--gold-dim); box-shadow: inset 0 0 0 2px var(--slot-in), inset 0 -6px 0 rgba(0, 0, 0, 0.35), 3px 3px 0 #000, 0 0 12px rgba(255, 138, 61, 0.25); }
 .slot.big { width: 88px; height: 88px; }
-.slot.small { width: 52px; height: 52px; box-shadow: inset 0 0 0 2px #0b0705, inset 0 -4px 0 rgba(0, 0, 0, 0.35); }
+.slot.small { width: 52px; height: 52px; box-shadow: inset 0 0 0 2px var(--slot-in), inset 0 -4px 0 rgba(0, 0, 0, 0.35); }
 .slot-qty {
   position: absolute; right: 4px; bottom: 1px;
   font: 700 0.85rem 'Cinzel', Georgia, serif; color: #fff;
@@ -183,3 +187,89 @@ code { background: var(--stone-2); padding: 1px 6px; color: var(--gold); }
   .target { gap: 14px; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+.nav { display: flex; justify-content: center; gap: 10px; margin-bottom: 28px; }
+.nav button {
+  padding: 8px 22px; cursor: pointer;
+  font: 700 1.05rem 'Cinzel', Georgia, serif; letter-spacing: 0.05em;
+  color: var(--mute); background: var(--stone);
+  border: 2px solid var(--edge); box-shadow: 3px 3px 0 #000;
+}
+.nav button:hover { color: var(--parch); }
+.nav button.on { color: var(--gold); border-color: var(--gold); }
+.nav button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+.planner-controls { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; margin-top: 22px; }
+.field { display: flex; flex-direction: column; gap: 4px; color: var(--mute); font-size: 0.85rem; }
+.range-to { padding-bottom: 14px; color: var(--mute); font-style: italic; }
+.num-input {
+  width: 130px; padding: 12px; text-align: center; color: var(--parch);
+  font: 700 1.2rem 'Cinzel', Georgia, serif;
+  background: var(--stone); border: 2px solid var(--edge);
+  box-shadow: var(--px) var(--px) 0 #000, inset 0 0 0 2px var(--void);
+  appearance: textfield; -moz-appearance: textfield;
+}
+.num-input::-webkit-outer-spin-button,
+.num-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.num-input[aria-invalid='true'] { border-color: var(--blood); }
+.field label small { font-weight: 400; opacity: 0.7; }
+.num-input:focus-visible {
+  outline: none; border-color: var(--gold);
+  box-shadow: var(--px) var(--px) 0 #000, inset 0 0 0 2px var(--void), 0 0 14px var(--glow);
+}
+
+.xp-need {
+  display: flex; flex-direction: column; justify-content: center; padding: 6px 18px; margin-left: auto;
+  color: var(--mute); font-size: 0.85rem;
+  background: var(--stone); border: 2px solid var(--gold-dim);
+  box-shadow: var(--px) var(--px) 0 #000, inset 0 0 0 2px var(--void);
+}
+.xp-need b { font: 700 1.5rem/1.2 'Cinzel', Georgia, serif; color: var(--gold); }
+
+.empty { margin: 16px 0 0; padding: 16px; color: var(--mute); background: var(--stone); border: 2px dashed var(--edge); }
+
+.plan-grid {
+  list-style: none; margin: 20px 0 0; padding: 0;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 14px;
+}
+.plan-box {
+  width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 14px 8px 12px; cursor: pointer; text-align: center;
+  background: var(--stone); border: 2px solid var(--edge);
+  box-shadow: var(--px) var(--px) 0 #000, inset 0 0 0 2px var(--void);
+  transition: border-color 0.15s, transform 0.15s;
+}
+.plan-box:hover { border-color: var(--gold); transform: translateY(-2px); }
+.plan-box:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.plan-x { font: 700 1.6rem/1 'Cinzel', Georgia, serif; color: var(--gold); }
+.plan-name { font-size: 0.85rem; line-height: 1.2; color: var(--parch); }
+
+:root[data-view='planner'] {
+  --void: #06121c;
+  --stone: #0d2233;
+  --stone-2: #143349;
+  --edge: #2c5a78;
+  --gold: #4fd1e8;
+  --gold-dim: #1f7f99;
+  --blood: #e0607a;
+  --parch: #e3f4fa;
+  --mute: #8fb3c4;
+  --glow: rgba(79, 209, 232, 0.45);
+  --slot-hi: #1d4863;
+  --slot-lo: #081826;
+  --slot-in: #04101a;
+}
+:root[data-view='planner'] body {
+  background:
+          radial-gradient(ellipse 80% 40% at 50% -8%, rgba(70, 180, 220, 0.38) 0%, transparent 70%),
+          radial-gradient(ellipse 100% 50% at 50% 115%, rgba(14, 90, 140, 0.55) 0%, transparent 70%),
+          linear-gradient(#08202f, #04101a);
+  background-attachment: fixed;
+}
+
+@media (prefers-reduced-motion: reduce) { .plan-box { transition: none; } .plan-box:hover { transform: none; } }
+@media (max-width: 520px) {
+  .xp-need { margin-left: 0; width: 100%; }
+  .num-input { width: 100%; }
+  .field { flex: 1; }
+}

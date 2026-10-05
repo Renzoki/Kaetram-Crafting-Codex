@@ -5,7 +5,7 @@ export function indexByOutput(recipes) {
   for (const r of recipes) {
     const main = r.outputs[0]
     if (!main) continue
-    ;(map[main.key] ??= []).push(r)
+        ;(map[main.key] ??= []).push(r)
   }
   return map
 }
@@ -34,7 +34,7 @@ export function buildTree(key, qty, ctx, path = new Set(), alts) {
   node.crafts = Math.ceil(qty / node.outQty)
   path.add(key)
   node.children = recipe.inputs.map((i) =>
-    buildTree(i.key, node.crafts * i.qty, ctx, path, i.alts)
+      buildTree(i.key, node.crafts * i.qty, ctx, path, i.alts)
   )
   path.delete(key)
   return node
@@ -74,9 +74,9 @@ export function summarize(rootKey, qty, ctx) {
   })
 
   const raw = Object.entries(demand)
-    .filter(([k]) => !(k in crafts))
-    .map(([key, q]) => ({ key, qty: q, alts: altsOf[key] }))
-    .sort((a, b) => b.qty - a.qty)
+      .filter(([k]) => !(k in crafts))
+      .map(([key, q]) => ({ key, qty: q, alts: altsOf[key] }))
+      .sort((a, b) => b.qty - a.qty)
 
   const levels = {}
   const xp = {}
@@ -100,4 +100,10 @@ export function oddsText(chance) {
   if (chance >= 100000) return 'always'
   const pct = chance / 1000
   return (pct >= 1 ? +pct.toFixed(1) : +pct.toFixed(3)) + '%'
+}
+
+const compact = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 })
+
+export function badge(n) {
+  return n >= 100000 ? compact.format(n) : String(n)
 }

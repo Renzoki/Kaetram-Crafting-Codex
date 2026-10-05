@@ -1,6 +1,6 @@
 <script setup>
 import { iconUrl } from '../api'
-import { cap } from '../tree'
+import { cap, badge } from '../tree'
 
 defineProps({
   node: { type: Object, required: true },
@@ -18,7 +18,7 @@ function hide(e) {
     <div class="row">
       <div class="slot" :class="{ raw: node.raw }">
         <img :src="iconUrl(node.alts?.[0] ?? node.key)" alt="" width="48" height="48" @error="hide" />
-        <span class="slot-qty">{{ node.qty }}</span>
+        <span class="slot-qty" :title="node.qty.toLocaleString()">{{ badge(node.qty) }}</span>
       </div>
 
       <div class="info">
@@ -32,11 +32,11 @@ function hide(e) {
         <span v-else class="sub ember">raw material</span>
 
         <select
-          v-if="node.options.length > 1"
-          class="alt"
-          aria-label="Choose recipe"
-          :value="node.choice"
-          @change="$emit('choose', { key: node.key, index: +$event.target.value })"
+            v-if="node.options.length > 1"
+            class="alt"
+            aria-label="Choose recipe"
+            :value="node.choice"
+            @change="$emit('choose', { key: node.key, index: +$event.target.value })"
         >
           <option v-for="(o, i) in node.options" :key="o.id" :value="i">
             {{ cap(o.skill) }}<template v-if="o.level != null"> · Lv {{ o.level }}</template>
@@ -47,11 +47,11 @@ function hide(e) {
 
     <ul v-if="node.children.length" class="tchildren">
       <TreeNode
-        v-for="(c, i) in node.children"
-        :key="c.key + i"
-        :node="c"
-        :name-of="nameOf"
-        @choose="$emit('choose', $event)"
+          v-for="(c, i) in node.children"
+          :key="c.key + i"
+          :node="c"
+          :name-of="nameOf"
+          @choose="$emit('choose', $event)"
       />
     </ul>
   </li>
